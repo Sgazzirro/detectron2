@@ -7,7 +7,8 @@ MODEL:
     # Structure
     NUM_CLASSES: 133
     NUM_STAGES: 2
-    IN_FEATURES: ["x4", "x8", "x16", "x32"]
+    IN_FEATURES: ["res2", "res3", "res4", "res5"]
+    #IN_FEATURES: ["x4", "x8", "x16", "x32"]
     #IN_FEATURES: ["STDC4", "STDC8", "STDC16", "STDC32"]
     HIDDEN_DIM: 64
     NUM_PROPOSALS: 100
