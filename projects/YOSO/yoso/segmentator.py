@@ -96,8 +96,7 @@ class YOSO(nn.Module):
         features = list()
         for f in self.in_features:
             features.append(backbone_feats[f])
-        for f in features:
-            print(features.shape)
+
         # outputs = self.sem_seg_head(features)
         neck_feats = self.yoso_neck(features)
 
@@ -196,6 +195,7 @@ class YOSO(nn.Module):
         cur_prob_masks = cur_scores.view(-1, 1, 1) * cur_masks
 
         h, w = cur_masks.shape[-2:]
+        #print("H", h, "W", w)
         panoptic_seg = torch.zeros((h, w), dtype=torch.int32, device=cur_masks.device)
         segments_info = []
 

@@ -89,7 +89,7 @@ class LiteDeformConv(nn.Module):
         in_channels = []
         #out_channels = [cfg.MODEL.YOSO.AGG_DIM]
         #TODO: ADJUST THAT!!!!!
-        out_channels = [32]
+        out_channels = [128]
         for feat in in_features:
             tmp = backbone_shape[feat].channels
             in_channels.append(tmp)

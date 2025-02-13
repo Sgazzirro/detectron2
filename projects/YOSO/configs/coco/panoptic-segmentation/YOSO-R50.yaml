@@ -1,7 +1,12 @@
 _BASE_: Base-COCO-PanopticSegmentation.yaml
 MODEL:
   BACKBONE:
-    NAME: "build_stdc_backbone"
+    FREEZE_AT: 0
+    NAME: "build_resnet_backbone"
+  RESNETS:
+    DEPTH: 50
+    STRIDE_IN_1X1: False
+    OUT_FEATURES: ["res2", "res3", "res4", "res5"]
   YOSO:
     SIZE_DIVISIBILITY: 32
     # Structure
@@ -10,7 +15,7 @@ MODEL:
     IN_FEATURES: ["res2", "res3", "res4", "res5"]
     #IN_FEATURES: ["x4", "x8", "x16", "x32"]
     #IN_FEATURES: ["STDC4", "STDC8", "STDC16", "STDC32"]
-    HIDDEN_DIM: 64
+    HIDDEN_DIM: 256
     NUM_PROPOSALS: 100
     CONV_KERNEL_SIZE_2D: 1
     CONV_KERNEL_SIZE_1D: 3
