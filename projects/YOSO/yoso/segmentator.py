@@ -1,22 +1,31 @@
 import torch
 from torch import nn
 import torch.nn.functional as F
-
 from detectron2.modeling import META_ARCH_REGISTRY, build_backbone
+from detectron2.modeling.backbone.stdc import STDCNet1446
 from detectron2.structures import Boxes, ImageList, Instances
 from detectron2.data import MetadataCatalog
 from .neck import YOSONeck
 from .head import YOSOHead
 from .loss import SetCriterion, HungarianMatcher
-#from v2.YOSO.projects.YOSO.yoso.neck import YOSONeck
-#from v2.YOSO.projects.YOSO.yoso.head import YOSOHead#
-#from v2.YOSO.projects.YOSO.yoso.loss import SetCriterion, HungarianMatcher
 from detectron2.utils.memory import retry_if_cuda_oom
 from detectron2.modeling.postprocessing import sem_seg_postprocess
-from v3.fast_backbone import STDCNet1446
 
 __all__ = ["YOSO"]
 
+def build_stdc_backbone(cfg):
+    """
+    Create a ResNet instance from config.
+
+    Returns:
+        ResNet: a :class:`ResNet` instance.
+    """
+    # need registration of new blocks/stems?
+    pretrain_path = "/home/angelo/PycharmProjects/TrackObjects/v3/STDCNet1446_76.47.tar"
+    base = 64
+    layers = [4, 5, 3]
+    block_num = 4
+    return STDCNet1446(base, layers, block_num, pretrain_model=pretrain_path, use_conv_last=False)
 
 @META_ARCH_REGISTRY.register()
 class YOSO(nn.Module):
@@ -32,8 +41,9 @@ class YOSO(nn.Module):
         self.metadata =  MetadataCatalog.get(cfg.DATASETS.TRAIN[0])
         self.test_topk_per_image = cfg.TEST.DETECTIONS_PER_IMAGE
         
-        self.backbone = build_backbone(cfg)
+        #self.backbone = build_backbone(cfg)
         #self.backbone = STDCNet1446()
+        self.backbone = build_stdc_backbone(cfg)
         self.size_divisibility = cfg.MODEL.YOSO.SIZE_DIVISIBILITY
         if self.size_divisibility < 0:
             self.size_divisibility = self.backbone.size_divisibility
@@ -86,6 +96,8 @@ class YOSO(nn.Module):
         features = list()
         for f in self.in_features:
             features.append(backbone_feats[f])
+        for f in features:
+            print(features.shape)
         # outputs = self.sem_seg_head(features)
         neck_feats = self.yoso_neck(features)
 

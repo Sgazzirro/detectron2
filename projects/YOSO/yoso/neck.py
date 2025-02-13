@@ -87,14 +87,22 @@ class LiteDeformConv(nn.Module):
         super(LiteDeformConv, self).__init__()
         in_features = cfg.MODEL.YOSO.IN_FEATURES
         in_channels = []
-        out_channels = [cfg.MODEL.YOSO.AGG_DIM]
-        #out_channels = [32]
+        #out_channels = [cfg.MODEL.YOSO.AGG_DIM]
+        #TODO: ADJUST THAT!!!!!
+        out_channels = [32]
         for feat in in_features:
             tmp = backbone_shape[feat].channels
             in_channels.append(tmp)
             out_channels.append(tmp//2)
         print(in_channels, out_channels)
-        
+        # Lateral conv_0 1024 - 512
+        # In resnet era 2048 - 1024
+
+        # Lateral conv_1 is 512 - 256
+        # In resnet era 1024 - 512
+
+        # Ma le mie feature come sono?
+        #
         self.lateral_conv0 = nn.Conv2d(in_channels=in_channels[-1], out_channels=out_channels[-1], kernel_size=1, stride=1, padding=0)
 
         self.deform_conv1 = DeformLayer(in_planes=out_channels[-1], out_planes=out_channels[-2])
@@ -162,6 +170,7 @@ class YOSONeck(nn.Module):
     def __init__(self, cfg, backbone_shape):
         super().__init__()
         print(backbone_shape)
+        print("MA PERCHE NON STAMPI NIENTE")
         self.deconv = LiteDeformConv(cfg=cfg, backbone_shape=backbone_shape)
         self.loc_conv = nn.Conv2d(in_channels=128+2,#backbone_shape[cfg.MODEL.YOSO.IN_FEATURES[0]].channels//2 + 2,
                                   out_channels=cfg.MODEL.YOSO.HIDDEN_DIM,
@@ -189,3 +198,9 @@ class YOSONeck(nn.Module):
         features = torch.cat([features, coord_feat], 1)
         features = self.loc_conv(features)
         return features
+
+def _test():
+    assert 1 == 1
+
+if __name__ == "__main__":
+    _test()
