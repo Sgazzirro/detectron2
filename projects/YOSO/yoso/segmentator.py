@@ -41,9 +41,9 @@ class YOSO(nn.Module):
         self.metadata =  MetadataCatalog.get(cfg.DATASETS.TRAIN[0])
         self.test_topk_per_image = cfg.TEST.DETECTIONS_PER_IMAGE
         
-        self.backbone = build_backbone(cfg)
+        #self.backbone = build_backbone(cfg)
         #self.backbone = STDCNet1446()
-        #self.backbone = build_stdc_backbone(cfg)
+        self.backbone = build_stdc_backbone(cfg)
         self.size_divisibility = cfg.MODEL.YOSO.SIZE_DIVISIBILITY
         if self.size_divisibility < 0:
             self.size_divisibility = self.backbone.size_divisibility

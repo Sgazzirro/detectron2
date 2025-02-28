@@ -89,12 +89,21 @@ class LiteDeformConv(nn.Module):
         in_channels = []
         #out_channels = [cfg.MODEL.YOSO.AGG_DIM]
         #TODO: ADJUST THAT!!!!!
-        out_channels = [128]
+        #out_channels = [128]
+        out_channels = [32]
         for feat in in_features:
             tmp = backbone_shape[feat].channels
             in_channels.append(tmp)
             out_channels.append(tmp//2)
+            # Nel caso di resnet fare sempre il //2 va bene, nel caso di stdc no
         print(in_channels, out_channels)
+        # in channels stdc : 64, 256, 512, 1024
+        # il codice genera out : 64, 32, 128, 256, 512 ( e non va bene)
+
+        # Se cambio il primo e ottengo [32 32 128 256 512] <--- OUT
+        # e                            [64, 256, 512, 1024] <--- IN
+        # ci saranno problemi?
+
         # Lateral conv_0 1024 - 512
         # In resnet era 2048 - 1024
 
@@ -172,7 +181,7 @@ class YOSONeck(nn.Module):
         print(backbone_shape)
         print("MA PERCHE NON STAMPI NIENTE")
         self.deconv = LiteDeformConv(cfg=cfg, backbone_shape=backbone_shape)
-        self.loc_conv = nn.Conv2d(in_channels=128+2,#backbone_shape[cfg.MODEL.YOSO.IN_FEATURES[0]].channels//2 + 2,
+        self.loc_conv = nn.Conv2d(in_channels=backbone_shape[cfg.MODEL.YOSO.IN_FEATURES[0]].channels//2 + 2,
                                   out_channels=cfg.MODEL.YOSO.HIDDEN_DIM,
                                   kernel_size=1,
                                   stride=1)
